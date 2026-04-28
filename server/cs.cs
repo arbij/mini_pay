@@ -32,13 +32,23 @@ server.Map(
 	async(
 		System.Text.Json.JsonElement body
 	)=>{
-		using var database
+		using
+		var
+		database
 		=
-		new database(
-			args.Length > 0
+		new
+		database(
+			args
+			.Length
+			>
+			0
 		);
 		
-		var payment_providers = database.payment_providers;
+		var
+		payment_providers
+		=
+		database
+		.payment_providers;
 		
 		switch(
 			body
@@ -90,9 +100,11 @@ server.Map(
 					.Where(
 						provider
 						=>
-						provider.name
+						provider
+						.name
 						==
-						new_provider.name
+						new_provider
+						.name
 					)
 					.AnyAsync()
 				){
@@ -118,7 +130,8 @@ server.Map(
 				.Where(
 					provider
 					=>
-					provider.name
+					provider
+					.name
 					==
 					body
 					.GetProperty(
@@ -130,9 +143,8 @@ server.Map(
 				
 				if(
 					provider is null
-				){
-					return "This provider does not exist!";
-				}
+				)
+				return "This provider does not exist!";
 				
 				payment_providers
 				.Remove(
@@ -193,7 +205,8 @@ server.Map(
 				.Where(
 					provider
 					=>
-					provider.name
+					provider
+					.name
 					==
 					body
 					.GetProperty(
@@ -205,15 +218,13 @@ server.Map(
 				
 				if(
 					provider is null
-				){
-					return "Provider does not exist!";
-				}
+				)
+				return "Provider does not exist!";
 				
 				if(
 					!provider.enabled
-				){
-					return "currently disabled!";
-				}
+				)
+				return "currently disabled!";
 				
 				if(
 					provider.url
@@ -225,9 +236,8 @@ server.Map(
 					provider.url
 					!=
 					"http://localhost:5001/"
-				){
-					return "currently unavailable!";
-				}
+				)
+				return "currently unavailable!";
 				
 				var referenceId="ORDER-";
 				
@@ -249,7 +259,8 @@ server.Map(
 					await
 					http_client
 					.PostAsync(
-						provider.url,
+						provider
+						.url,
 						
 						new StringContent(
 							Serialize(
@@ -296,7 +307,7 @@ class payment_provider{
 	public int id {get; private set;}
 	public string name {get;set;}
 	public string currency {get;set;}
-	public string url {get;set;}= "localhost:5001";
+	public string url {get;set;}= "http://localhost:5001";
 	public bool enabled {get;set;}= true;
 	public string description {get;set;}= "";
 }

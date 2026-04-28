@@ -26,7 +26,8 @@
 					
 					body
 					:
-					JSON.stringify(
+					JSON
+					.stringify(
 						body
 					)
 				}
@@ -37,7 +38,8 @@
 		try{
 			response
 			=
-			JSON.parse(
+			JSON
+			.parse(
 				response
 			)
 		}
@@ -80,27 +82,42 @@
 	
 	let result
 	=
-	create_element('pre')
+	create_element(
+		'pre'
+	)
 	
-	function display(
+	async function display(
 		response
 	){
+		response
+		=
+		await
+		response
+		
 		if(
-			typeof response === 'object'
+			typeof
+			response
+			===
+			'object'
 		)
 		response
 		=
-		JSON.stringify(
+		JSON
+		.stringify(
 			response,
 			null,
 			4
 		)
 		
-		result.innerHTML= response
+		result
+		.innerHTML
+		=
+		response
 	}
 	
 	function append(
-		...nodes
+		...
+		nodes
 	){
 		document
 		.body
@@ -111,7 +128,9 @@
 	}
 	
 	function br(){
-		return create_element('br')
+		return create_element(
+			'br'
+		)
 	}
 	
 	append(
@@ -124,7 +143,6 @@
 				
 				async onclick(){
 					display(
-						await
 						send_request(
 							{
 								name: 'get all'
@@ -197,7 +215,7 @@
 				
 				async onclick(){
 					display(
-						await send_request(
+						send_request(
 							{
 								name: 'remove',
 								
@@ -246,7 +264,17 @@
 		)
 	}
 	
-	new_data.enabled.type='checkbox'
+	new_data
+	.enabled
+	.type
+	=
+	'checkbox'
+	
+	new_data
+	.enabled
+	.checked
+	=
+	true
 	
 	append(
 		create_element(
@@ -272,10 +300,14 @@
 						.value
 					}
 					
-					provider.enabled=new_data.enabled.checked
+					provider
+					.enabled
+					=
+					new_data
+					.enabled
+					.checked
 					
 					display(
-						await
 						send_request(
 							{
 								name: 'add',
@@ -320,17 +352,26 @@
 						.value						
 					}
 					
-					provider.enabled=new_data.enabled.checked
+					provider
+					.enabled
+					=
+					new_data
+					.enabled
+					.checked
 					
 					display(
-						await
 						send_request(
 							{
-								name: 'update',
+								name:
+								'update',
 								
-								provider_name: name_of_provider.value,
+								provider_name
+								:
+								name_of_provider
+								.value,
 								
-								new_data: provider
+								new_data:
+								provider
 							}
 						)
 					)
@@ -342,7 +383,10 @@
 		br()
 	)
 	
-	let amount= create_element(
+	let
+	amount
+	=
+	create_element(
 		'input',
 		{
 			type: 'number',
@@ -351,7 +395,12 @@
 		}
 	)
 	
-	let description= create_element('input')
+	let
+	description
+	=
+	create_element(
+		'input'
+	)
 	
 	append(
 		'amount to be payed (in provider\'s currency): ',
@@ -370,7 +419,7 @@
 				
 				async onclick(){
 					display(
-						await send_request(
+						send_request(
 							{
 								name: 'pay',
 								amount: + amount.value,

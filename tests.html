@@ -46,16 +46,26 @@
 		return response
 	}
 	
+	let
+	chai
+	=
+	await
+	import(
+		'https://cdn.jsdelivr.net/npm/chai'
+	)
+	
+	chai
+	.config
+	.truncateThreshold
+	=
+	0
+	
 	let{
 		equal,
 		deepEqual
 	}
 	=
-	(
-		await import(
-			'https://cdn.jsdelivr.net/npm/chai'
-		)
-	)
+	chai
 	.assert
 	
 	try{	
@@ -69,51 +79,22 @@
 			[
 				{
 					id: 1,
-					name: "paypal",
-					currency: "EUR",
-					url: "http://localhost:5001",
+					name: 'paypal',
+					currency: 'EUR',
+					url: 'http://localhost:5001',
 					enabled: true,
-					description: ""
+					description: ''
 				},
 				
 				{
 					id: 2,
-					name: "stripe",
-					currency: "USD",
-					url: "http://localhost:5001",
+					name: 'stripe',
+					currency: 'USD',
+					url: 'http://localhost:5001',
 					enabled: true,
-					description: ""
+					description: ''
 				}
 			]
-		)
-		
-		deepEqual(	
-			await send_request(
-				{
-					name: 'get single',
-					provider_name: 'stripe'
-				}
-			),
-				
-			{
-				id: 2,
-				name: "stripe",
-				currency: "USD",
-				url: "http://localhost:5001",
-				enabled: true,
-				description: ""
-			}
-		)
-		
-		equal(
-			await send_request(
-				{
-					name: 'get single',
-					provider_name: 'non-existent provider'
-				}
-			),
-			
-			null
 		)
 		
 		equal(
@@ -131,6 +112,35 @@
 			),
 			
 			'success!'
+		)
+		
+		deepEqual(	
+			await send_request(
+				{
+					name: 'get single',
+					provider_name: 'paybuddy'
+				}
+			),
+				
+			{
+				id: 3,
+				name: 'paybuddy',
+				currency: 'GBP',
+				url: 'http://localhost:5001',
+				enabled: true,
+				description: ''
+			}
+		)
+		
+		equal(
+			await send_request(
+				{
+					name: 'get single',
+					provider_name: 'non-existent provider'
+				}
+			),
+			
+			null
 		)
 		
 		equal(
@@ -212,7 +222,7 @@
 					name: 'pay',
 					provider_name: 'paypal',
 					amount: 100.5,
-					description: "test transaction"
+					description: 'test transaction'
 				}
 			),
 			
@@ -225,7 +235,7 @@
 					name: 'pay',
 					provider_name: 'paybuddy',
 					amount: 100.5,
-					description: "test transaction"
+					description: 'test transaction'
 				}
 			),
 			
@@ -240,7 +250,7 @@
 				name: 'pay',
 				provider_name: 'stripe',
 				amount: 100.5,
-				description: "test transaction"
+				description: 'test transaction'
 			}
 		)
 		
@@ -266,10 +276,9 @@
 				&&
 				message === 'Payment processing failed'
 			)
-		)
-		throw new Error('bad payment server response')
-		
-		if(
+			
+			||
+			
 			[
 				transactionId,
 				timestamp,
@@ -304,7 +313,7 @@
 					name: 'pay',
 					provider_name: 'stripe',
 					amount: 100.5,
-					description: "test transaction"
+					description: 'test transaction'
 				}
 			),
 			
