@@ -1,0 +1,390 @@
+<!doctype html>
+<script
+	type=module
+>	
+	async function send_request(
+		body
+	){
+		let
+		response
+		=
+		await
+		(
+			await
+			fetch(
+				'http://localhost:5000',
+				
+				{
+					method:
+					'POST',
+					
+					headers
+					:{
+						'Content-Type':
+						'application/json'
+					},
+					
+					body
+					:
+					JSON.stringify(
+						body
+					)
+				}
+			)
+		)
+		.text()
+		
+		try{
+			response
+			=
+			JSON.parse(
+				response
+			)
+		}
+		catch{}
+		
+		return response
+	}
+	
+	function
+	create_element(
+		tag,
+		attributes
+	){
+		let element
+		=
+		document
+		.createElement(
+			tag
+		)
+		
+		for(
+			let
+			attribute
+			in
+			attributes
+		){
+			element[
+				attribute
+			]
+			=
+			attributes[
+				attribute
+			]
+		}
+		
+		return(
+			element
+		)
+	}
+	
+	let result
+	=
+	create_element('pre')
+	
+	function display(
+		response
+	){
+		if(
+			typeof response === 'object'
+		)
+		response
+		=
+		JSON.stringify(
+			response,
+			null,
+			4
+		)
+		
+		result.innerHTML= response
+	}
+	
+	function append(
+		...nodes
+	){
+		document
+		.body
+		.append(
+			...
+			nodes
+		)
+	}
+	
+	function br(){
+		return create_element('br')
+	}
+	
+	append(
+		create_element(
+			'button',
+			
+			{
+				innerHTML:
+				'get all payment providers',
+				
+				async onclick(){
+					display(
+						await
+						send_request(
+							{
+								name: 'get all'
+							}
+						)
+					)
+				}
+			}
+		),
+		
+		br(),
+		br()
+	)
+	
+	let name_of_provider
+	=
+	create_element(
+		'input'
+	)
+	
+	append(
+		'Name of payment provider: ',
+		
+		name_of_provider,
+		
+		br(),
+		
+		create_element(
+			'button',
+			
+			{
+				innerHTML:
+				'get a single payment provider',
+				
+				async onclick(){
+					let response
+					=
+					await
+					send_request(
+						{
+							name: 'get single',
+							
+							provider_name: name_of_provider.value
+						}
+					)
+					
+					if(
+						response===null
+					){
+						display(
+							'This provider does not exist!'
+						)
+					}
+					else{
+						display(
+							response
+						)
+					}
+				}
+			}
+		),
+		
+		br(),
+		
+		create_element(
+			'button',
+			
+			{
+				innerHTML: 'remove provider',
+				
+				async onclick(){
+					display(
+						await send_request(
+							{
+								name: 'remove',
+								
+								provider_name: name_of_provider.value
+							}
+						)
+					)
+				}
+			}
+		),
+		
+		br(),
+		br()
+	)
+	
+	let keys
+	=
+	[
+		'name',
+		'currency',
+		'url',
+		'description',
+		'enabled'
+	]
+	
+	let new_data = {}
+	
+	for(
+		let key
+		of keys
+	){
+		append(
+			key,
+			
+			': ',
+			
+			new_data[
+				key
+			]
+			=
+			create_element(
+				'input'
+			),
+			
+			br()
+		)
+	}
+	
+	new_data.enabled.type='checkbox'
+	
+	append(
+		create_element(
+			'button',
+			
+			{
+				innerHTML: 'add new provider',
+				
+				async onclick(){
+					let provider = {}
+					
+					for(
+						let key
+						in new_data
+					){
+						provider[
+							key
+						]
+						=
+						new_data[
+							key
+						]
+						.value
+					}
+					
+					provider.enabled=new_data.enabled.checked
+					
+					display(
+						await
+						send_request(
+							{
+								name: 'add',
+								
+								provider
+							}
+						)
+					)
+				}
+			}
+		),
+		
+		br(),
+		
+		create_element(
+			'button',
+			
+			{
+				innerHTML: 'update an existing provider (also fill provider name at the top, empty inputs do not get sent)',
+				
+				async onclick(){
+					let provider = {}
+					
+					for(
+						let key
+						in new_data
+					){
+						if(
+							new_data[
+								key
+							]
+							!==
+							''
+						)
+						provider[
+							key
+						]
+						=
+						new_data[
+							key
+						]
+						.value						
+					}
+					
+					provider.enabled=new_data.enabled.checked
+					
+					display(
+						await
+						send_request(
+							{
+								name: 'update',
+								
+								provider_name: name_of_provider.value,
+								
+								new_data: provider
+							}
+						)
+					)
+				}
+			}
+		),
+		
+		br(),
+		br()
+	)
+	
+	let amount= create_element(
+		'input',
+		{
+			type: 'number',
+			min: 1,
+			value: 1
+		}
+	)
+	
+	let description= create_element('input')
+	
+	append(
+		'amount to be payed (in provider\'s currency): ',
+		amount,
+		br(),
+		
+		'payment description',
+		description,
+		br(),
+		
+		create_element(
+			'button',
+			
+			{
+				innerHTML: 'make a payment (also fill provider name at the top)',
+				
+				async onclick(){
+					display(
+						await send_request(
+							{
+								name: 'pay',
+								amount: + amount.value,
+								description: description.value,
+								provider_name: name_of_provider.value
+							}
+						)
+					)
+				}
+			}
+		)
+	)
+	
+	append(
+		result
+	)
+</script>
