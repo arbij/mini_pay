@@ -12,4 +12,5 @@ pushd server
 start "" "run test.bat"
 popd
 
-tests.html
+pushd tests
+start run.bat
