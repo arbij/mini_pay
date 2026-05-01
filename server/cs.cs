@@ -26,6 +26,12 @@ server.UseCors(
     .AllowAnyHeader()
 );
 
+bool testing
+=
+args.Length == 1
+&&
+args[0] == "test";
+
 server.Map(
 	"/",
 	
@@ -38,10 +44,7 @@ server.Map(
 		=
 		new
 		database(
-			args
-			.Length
-			>
-			0
+			testing
 		);
 		
 		var
@@ -301,6 +304,11 @@ server.Map(
 	}
 );
 
+if(
+	testing
+)
+server.Run("http://localhost:5002");
+else
 server.Run();
 
 class payment_provider{
