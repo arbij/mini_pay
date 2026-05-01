@@ -18,6 +18,6 @@ To run the application, open "run.bat".
 
 To run automated testing, open "run tests.bat".
 
-SQL Server and .NET 10 SDK (or later) must be installed. The project runs natively on windows, but the batch commands can be adapted for other operating systems.
+SQL Server, .NET 10 SDK (or later), and nodejs (for testing) must be installed. The project runs natively on windows, but the batch commands can be adapted for other operating systems.
 
 The project may be improved with a more polished UI and stronger input sanitization.
