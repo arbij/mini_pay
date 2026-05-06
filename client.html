@@ -1,52 +1,17 @@
 <!doctype html>
+
+<script
+	src= './send request.js'
+></script>
+
 <script
 	type=module
->	
-	async function send_request(
-		body
-	){
-		let
-		response
-		=
-		await
-		(
-			await
-			fetch(
-				'http://localhost:5000',
-				
-				{
-					method:
-					'POST',
-					
-					headers
-					:{
-						'Content-Type':
-						'application/json'
-					},
-					
-					body
-					:
-					JSON
-					.stringify(
-						body
-					)
-				}
-			)
-		)
-		.text()
-		
-		try{
-			response
-			=
-			JSON
-			.parse(
-				response
-			)
-		}
-		catch{}
-		
-		return response
-	}
+>
+	let send_request
+	=
+	create_request_sender(
+		5000
+	)
 	
 	function
 	create_element(

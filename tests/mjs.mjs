@@ -4,48 +4,17 @@ import{
 }
 from 'node:assert/strict';
 
-async function send_request(
-	body
-){
-	let
-	response
-	=
+let send_request
+=
+(
 	await
-	(
-		await
-		fetch(
-			'http://localhost:5002',
-			
-			{
-				method:
-				'POST',
-				
-				headers:
-				{
-					'Content-Type':
-					'application/json'
-				},
-				
-				body:
-				JSON.stringify(
-					body
-				)
-			}
-		)
+	import(
+		'../send request.js'
 	)
-	.text()
-	
-	try{
-		response
-		=
-		JSON.parse(
-			response
-		)
-	}
-	catch{}
-	
-	return response
-}
+)
+.default(
+	5002
+)
 
 async function wait_for_server(
 	port
