@@ -4,21 +4,6 @@ import{
 }
 from 'node:assert/strict';
 
-function print(
-	...strings
-){
-	let print = console.log
-	
-	for(
-		let string of strings
-	){
-		print(
-			string
-		)
-	}
-	print('')
-}
-
 async function send_request(
 	body
 ){
@@ -88,8 +73,19 @@ async function wait_for_server(
 	}
 }
 
-await wait_for_server(5002) //minimay
-await wait_for_server(5001) //payment provider
+await
+Promise.all(
+	[
+		5002, //minimay
+		5001 //payment provider
+	]
+	.map(
+		value=>
+		wait_for_server(
+			value
+		)
+	)
+)
 
 deepEqual(
 	await send_request(
