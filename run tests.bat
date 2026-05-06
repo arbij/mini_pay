@@ -1,16 +1,16 @@
 @echo off
 
 pushd "test database/reset"
-start run.bat
-popd
-
-pushd "payment provider server"
-start run.bat
+call run.bat
 popd
 
 pushd server
-start "" "run test.bat"
+start cmd /c "run test.bat"
 popd
 
-pushd tests
-start run.bat
+pushd "payment provider server"
+start cmd /c run.bat
+popd
+
+cd tests
+run.bat

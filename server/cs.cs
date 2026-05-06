@@ -229,23 +229,15 @@ server.Map(
 				)
 				return "currently disabled!";
 				
-				// if(
-				// 	provider.url
-				// 	!=
-				// 	"http://localhost:5001"
-					
-				// 	&&
-					
-				// 	provider.url
-				// 	!=
-				// 	"http://localhost:5001/"
-				// )
+				var mock_url
+				=
+				"http://localhost:5001";
 				
 				if(
 					!
 					new[]{
-						"http://localhost:5001",
-						"http://localhost:5001/"
+						mock_url,
+						mock_url+"/"
 					}
 					.Contains(
 						provider.url

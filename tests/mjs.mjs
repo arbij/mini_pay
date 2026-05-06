@@ -35,14 +35,13 @@ async function send_request(
 				method:
 				'POST',
 				
-				headers
-				:{
+				headers:
+				{
 					'Content-Type':
 					'application/json'
 				},
 				
-				body
-				:
+				body:
 				JSON.stringify(
 					body
 				)
@@ -62,7 +61,36 @@ async function send_request(
 	
 	return response
 }
-	
+
+async function wait_for_server(
+	port
+){
+	while(true){
+		try{
+			await
+			fetch(
+				'http://localhost:'
+				+
+				port
+			)
+			
+			return
+		}
+		catch{}
+		
+		await new Promise(
+			resolve=>
+			setTimeout(
+				resolve,
+				200
+			)
+		)
+	}
+}
+
+await wait_for_server(5002) //minimay
+await wait_for_server(5001) //payment provider
+
 deepEqual(
 	await send_request(
 		{
