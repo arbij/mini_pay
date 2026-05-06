@@ -229,16 +229,27 @@ server.Map(
 				)
 				return "currently disabled!";
 				
+				// if(
+				// 	provider.url
+				// 	!=
+				// 	"http://localhost:5001"
+					
+				// 	&&
+					
+				// 	provider.url
+				// 	!=
+				// 	"http://localhost:5001/"
+				// )
+				
 				if(
-					provider.url
-					!=
-					"http://localhost:5001"
-					
-					&&
-					
-					provider.url
-					!=
-					"http://localhost:5001/"
+					!
+					new[]{
+						"http://localhost:5001",
+						"http://localhost:5001/"
+					}
+					.Contains(
+						provider.url
+					)
 				)
 				return "currently unavailable!";
 				
@@ -309,7 +320,7 @@ if(
 )
 server.Run("http://localhost:5002");
 else
-server.Run();
+server.Run(); //default port is 5000
 
 class payment_provider{
 	public int id {get; private set;}

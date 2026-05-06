@@ -281,8 +281,13 @@ if(
 	.includes(
 		undefined
 	)
-)
-throw new Error('bad payment server response')
+){
+	console.log(
+		response
+	)
+	
+	throw new Error('bad payment server response')
+}
 
 equal(
 	await send_request(
@@ -314,7 +319,7 @@ equal(
 	'currently unavailable!'
 )
 
-equal(	
+equal(
 	await send_request(
 		{
 			name: 'bad request'
