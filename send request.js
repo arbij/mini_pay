@@ -49,7 +49,8 @@ function create_request_sender(
 	}
 }
 
-try{
-	module.exports= create_request_sender
-}
-catch{}
+if(
+	typeof window === 'undefined'
+)
+module.exports=
+create_request_sender
