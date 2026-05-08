@@ -10,13 +10,17 @@ An additional database with the same schema has been created for the purpose of 
 
 The same backend is used for both production and testing, with a command line argument specifying which database to connect to.
 
+The same client is used for both production and testing, with a query parameter specifying which port to send requests to.
+
 The test front-end does not have a user interface. All the testing http requests are automatically sent to the backend when the frontend is opened, and the responses are automatically compared to their expected values. The output indicates whether all tests have passed.
 
 To set up the databases (needed only once after installation), run "set up.bat".
 
 To run the application, open "run.bat".
 
-To run automated testing, open "run tests.bat".
+To run automated testing, open "run automated tests.bat".
+
+To run test client, open "run test client.bat".
 
 SQL Server, .NET 10 SDK (or later), and nodejs (for testing) must be installed. The project runs natively on windows, but the batch commands can be adapted for other operating systems.
 

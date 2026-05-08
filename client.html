@@ -10,6 +10,13 @@
 	let send_request
 	=
 	create_request_sender(
+		new URLSearchParams(
+			location.search
+		)
+		.get(
+			'port'
+		)
+		??
 		5000
 	)
 	
