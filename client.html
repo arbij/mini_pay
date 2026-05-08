@@ -213,7 +213,7 @@
 		'enabled'
 	]
 	
-	let new_data = {}
+	let new_inputs = {}
 	
 	for(
 		let key
@@ -224,7 +224,7 @@
 			
 			': ',
 			
-			new_data[
+			new_inputs[
 				key
 			]
 			=
@@ -236,13 +236,13 @@
 		)
 	}
 	
-	new_data
+	new_inputs
 	.enabled
 	.type
 	=
 	'checkbox'
 	
-	new_data
+	new_inputs
 	.enabled
 	.checked
 	=
@@ -260,13 +260,13 @@
 					
 					for(
 						let key
-						in new_data
+						in new_inputs
 					){
 						provider[
 							key
 						]
 						=
-						new_data[
+						new_inputs[
 							key
 						]
 						.value
@@ -275,7 +275,7 @@
 					provider
 					.enabled
 					=
-					new_data
+					new_inputs
 					.enabled
 					.checked
 					
@@ -305,10 +305,10 @@
 					
 					for(
 						let key
-						in new_data
+						in new_inputs
 					){
 						if(
-							new_data[
+							new_inputs[
 								key
 							]
 							!==
@@ -318,7 +318,7 @@
 							key
 						]
 						=
-						new_data[
+						new_inputs[
 							key
 						]
 						.value						
@@ -327,7 +327,7 @@
 					provider
 					.enabled
 					=
-					new_data
+					new_inputs
 					.enabled
 					.checked
 					
@@ -401,10 +401,8 @@
 					)
 				}
 			}
-		)
-	)
-	
-	append(
+		),
+		
 		result
 	)
 </script>

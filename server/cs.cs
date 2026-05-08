@@ -9,6 +9,7 @@
 
 using static System.Text.Json.JsonSerializer;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 
 var http_client = new HttpClient();
 
@@ -21,9 +22,9 @@ var server = builder.Build();
 server.UseCors(
 	policy=>
 	policy
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader()
+	.AllowAnyOrigin()
+	.AllowAnyMethod()
+	.AllowAnyHeader()
 );
 
 bool testing
@@ -32,7 +33,90 @@ args.Length == 1
 &&
 args[0] == "test";
 
-server.Map(
+server.MapGet(
+	"/",
+	
+	()=>
+	Results
+	.File(
+		Path
+		.Combine(
+			server
+			.Environment
+			.ContentRootPath,
+			
+			"..",
+			
+			"download client.html"
+		),
+		
+		"text/html"
+	)
+);
+
+server.MapGet(
+	"/download",
+	
+	async()=>{
+		var memory_stream = new MemoryStream();
+		
+		{
+			using var archive
+			=
+			new ZipArchive(
+				memory_stream,
+				ZipArchiveMode.Create,
+				true
+			);
+			
+			foreach(
+				var file_name
+				in new[]{
+					"client.html",
+					"send request.js"
+				}
+			){
+				using var writer
+				=
+				new StreamWriter(
+					archive
+					.CreateEntry(
+						file_name
+					)
+					.Open()
+				);
+				
+				await
+				writer
+				.WriteAsync(
+					await
+					File
+					.ReadAllTextAsync(
+						"../"
+						+
+						file_name
+					)
+				);
+			}
+		}
+		
+		memory_stream
+		.Seek(
+			0,
+			SeekOrigin.Begin
+		);
+		
+		return
+		Results
+		.File(
+			memory_stream,
+			"application/zip",
+			"mini-pay-client.zip"
+		);
+	}
+);
+
+server.MapPost(
 	"/",
 	
 	async(
