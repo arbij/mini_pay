@@ -22,8 +22,8 @@ To run automated testing, open "run automated tests.bat".
 
 To run test client, open "run test client.bat".
 
-In production, end-users can download the client by typing the server's domain in the browser. Developers can test the functionality in "http://localhost:5000".
+In production, assuming the server is running, end-users can download the client by typing the server's domain in the browser. Developers can test the functionality in "http://localhost:5000". To run the server, open "server/run.bat".
 
-SQL Server, .NET 10 SDK (or later), nodejs (for automated testing), and python (for manual testing) must be installed. The project runs natively on windows, but the batch commands can be adapted for other operating systems.
+SQL Server, .NET 10 SDK (or later), nodejs (for automated testing), and python (for test client) must be installed. The project runs natively on windows, but the batch commands can be adapted for other operating systems.
 
 The project may be improved with a more polished UI and stronger input sanitization.
