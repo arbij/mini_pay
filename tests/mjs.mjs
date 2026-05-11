@@ -32,7 +32,8 @@ async function wait_for_server(
 		}
 		catch{}
 		
-		await new Promise(
+		await
+		new Promise(
 			resolve=>
 			setTimeout(
 				resolve,
@@ -43,17 +44,17 @@ async function wait_for_server(
 }
 
 await
-Promise.all(
+Promise
+.all(
 	[
-		5002, //minimay
-		5001 //payment provider
-	]
-	.map(
-		value=>
 		wait_for_server(
-			value
+			5001
+		),
+		
+		wait_for_server(
+			5002
 		)
-	)
+	]
 )
 
 deepEqual(
@@ -127,7 +128,7 @@ equal(
 		}
 	),
 	
-	null
+	'This provider does not exist!'
 )
 
 equal(
@@ -213,7 +214,7 @@ equal(
 		}
 	),
 	
-	'Provider does not exist!'
+	'This provider does not exist!'
 )
 
 equal(	
@@ -314,12 +315,42 @@ equal(
 
 equal(
 	await send_request(
+		//no body
+	),
+	
+	''
+)
+
+equal(
+	await send_request(
+		'not an object'
+	),
+	
+	''
+)
+
+equal(
+	await send_request(
 		{
-			name: 'bad request'
+			//name missing
 		}
 	),
 	
-	'bad request'
+	''
+)
+
+equal(
+	await send_request(
+		{
+			name:
+			'wrong name',
+			
+			provider_name:
+			'stripe'
+		}
+	),
+	
+	''
 )
 
 console.log(

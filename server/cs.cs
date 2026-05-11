@@ -29,11 +29,21 @@ server.UseCors(
 
 bool testing
 =
-args.Length == 1
-&&
-args[0] == "test";
+args
+.Length
+==
+1
 
-server.MapGet(
+&&
+
+args[
+	0
+]
+==
+"test";
+
+server
+.MapGet(
 	"/",
 	
 	()=>
@@ -54,7 +64,8 @@ server.MapGet(
 	)
 );
 
-server.MapGet(
+server
+.MapGet(
 	"/download",
 	
 	async()=>{
@@ -116,11 +127,14 @@ server.MapGet(
 	}
 );
 
-server.MapPost(
+server
+.MapPost(
 	"/",
 	
 	async(
-		System.Text.Json.JsonElement body
+		System.Text.Json.JsonElement
+		body
+		//crashes and returns an empty string if the request does not contain a body
 	)=>{
 		using
 		var
@@ -137,266 +151,229 @@ server.MapPost(
 		database
 		.payment_providers;
 		
-		switch(
-			body
-			.GetProperty(
-				"name"
-			)
-			.GetString()
+		var request_name
+		=
+		body
+		.GetProperty(
+			"name"
+		)
+		.GetString();
+		//crashes and returns an empty string if name property is missing
+		
+		if(
+			request_name
+			==
+			"get all"
+		)
+		return
+		(object)
+		await
+		payment_providers
+		.ToListAsync();
+		
+		if(
+			request_name
+			==
+			"add"
 		){
-			case "get all":
-				return
-				(object)
-				await
-				payment_providers
-				.ToListAsync();
-			
-			case "get single":
-				return
+			var new_provider
+			=
+			Deserialize<
+				payment_provider
+			>(
+				body
+				.GetProperty(
+					"provider"
+				)
+				.GetRawText()
+				//crashes and returns an empty string if the provider is missing or not deserializable
+			);
+				
+			if(
 				await
 				payment_providers
 				.Where(
 					provider
 					=>
-					provider.name
+					provider
+					.name
 					==
-					body
-					.GetProperty(
-						"provider_name"
-					)
-					.GetString()
-				)
-				.SingleOrDefaultAsync();
-			
-			case "add":
-				var new_provider
-				=
-				Deserialize<
-					payment_provider
-				>(
-					body
-					.GetProperty(
-						"provider"
-					)
-					.GetRawText()
-				);
-				
-				if(
-					await
-					payment_providers
-					.Where(
-						provider
-						=>
-						provider
-						.name
-						==
-						new_provider
-						.name
-					)
-					.AnyAsync()
-				){
-					return "This provider already exists!";
-				}
-				
-				payment_providers
-				.Add(
 					new_provider
-				);
-				
-				await
-				database
-				.SaveChangesAsync();
-				
-				return "success!";
-			
-			case "remove":
-				var provider
-				=
-				await
-				payment_providers
-				.Where(
-					provider
-					=>
-					provider
 					.name
-					==
-					body
-					.GetProperty(
-						"provider_name"
-					)
-					.GetString()
 				)
-				.SingleOrDefaultAsync();
-				
-				if(
-					provider is null
-				)
-				return "This provider does not exist!";
-				
-				payment_providers
-				.Remove(
-					provider
-				);
-				
-				await
-				database
-				.SaveChangesAsync();
-				
-				return "success!";
-				
-			case "update":
-				provider
-				=
-				await
-				payment_providers
-				.Where(
-					provider
-					=>
-					provider.name
-					==
-					body
-					.GetProperty(
-						"provider_name"
-					)
-					.GetString()
-				)
-				.SingleOrDefaultAsync();
-				
-				if(
-					provider is null
-				){
-					return "This provider does not exist!";
-				}
-				
-				Newtonsoft.Json.JsonConvert.PopulateObject(
-					body
-					.GetProperty(
-						"new_data"
-					)
-					.GetRawText(),
-					
-					provider
-				);
-				
-				await
-				database
-				.SaveChangesAsync();
-				
-				return "success!";
+				.AnyAsync()
+			)
+			return "This provider already exists!";
 			
-			case "pay":
+			payment_providers
+			.Add(
+				new_provider
+			);
+		}
+		else{
+			var provider
+			=
+			await
+			payment_providers
+			.Where(
 				provider
-				=
-				await
-				payment_providers
-				.Where(
-					provider
-					=>
-					provider
-					.name
-					==
-					body
-					.GetProperty(
-						"provider_name"
-					)
-					.GetString()
+				=>
+				provider
+				.name
+				==
+				body
+				.GetProperty(
+					"provider_name"
 				)
-				.SingleOrDefaultAsync();
+				.GetString()
+				//crashes and returns an empty string if provider_name is missing
+			)
+			.SingleOrDefaultAsync();
+			
+			if(
+				provider
+				is null
+			)
+			return "This provider does not exist!";
+			
+			switch(
+				request_name
+			){
+				case "get single":
+					return
+					provider;
 				
-				if(
-					provider is null
-				)
-				return "Provider does not exist!";
-				
-				if(
-					!provider.enabled
-				)
-				return "currently disabled!";
-				
-				var mock_url
-				=
-				"http://localhost:5001";
-				
-				if(
-					!
-					new[]{
-						mock_url,
-						mock_url+"/"
-					}
-					.Contains(
-						provider.url
-					)
-				)
-				return "currently unavailable!";
-				
-				var referenceId="ORDER-";
-				
-				var iteration=0;
-				
-				while(
-					iteration<5
-				){
-					referenceId
-					+=
-					Random.Shared.Next(0, 10);
-					
-					++iteration;
-				}
-				
-				return
-				await
-				(
-					await
-					http_client
-					.PostAsync(
+				case "remove":
+					payment_providers
+					.Remove(
 						provider
-						.url,
+					);
+				break;
+					
+				case "update":
+					Newtonsoft.Json.JsonConvert.PopulateObject(
+						body
+						.GetProperty(
+							"new_data"
+						)
+						.GetRawText(),
+						//crashes if new_data missing or malformed
 						
-						new StringContent(
-							Serialize(
-								new{
-									amount
-									=
-									body
-									.GetProperty(
-										"amount"
-									)
-									.GetDecimal(),
-									
-									currency
-									=
-									provider.currency,
-									
-									description
-									=
-									body
-									.GetProperty(
-										"description"
-									)
-									.GetString(),
-									
-									referenceId
-								}
-							),
-							System.Text.Encoding.UTF8,
-							"application/json"
+						provider
+					);
+				break;
+				
+				case "pay":
+					if(
+						!
+						provider
+						.enabled
+					)
+					return "currently disabled!";
+					
+					const string mock_url=
+					"http://localhost:5001";
+					
+					switch(
+						provider
+						.url
+					){
+						case mock_url:
+						case mock_url + "/":
+							break;
+						
+						default:
+							return "currently unavailable!";
+					}
+					
+					var referenceId=
+					"ORDER-";
+					
+					var iteration=
+					0;
+					
+					while(
+						iteration
+						<5
+					){
+						referenceId
+						+=
+						Random.Shared.Next(0, 10);
+						
+						++iteration;
+					}
+					
+					return
+					await
+					(
+						await
+						http_client
+						.PostAsync(
+							provider
+							.url,
+							
+							new StringContent(
+								Serialize(
+									new{
+										amount
+										=
+										body
+										.GetProperty(
+											"amount"
+										)
+										.GetDecimal(),
+										//crashes if amount missing or malformed
+										
+										currency
+										=
+										provider
+										.currency,
+										
+										description
+										=
+										body
+										.GetProperty(
+											"description"
+										)
+										.GetString(),
+										//crashes if description missing
+										
+										referenceId
+									}
+								),
+								
+								System.Text.Encoding.UTF8,
+								"application/json"
+							)
 						)
 					)
-				)
-				.Content
-				.ReadAsStringAsync();
+					.Content
+					.ReadAsStringAsync();
+				
+				//matches when the request body contains a malformed name and a provider_name. Same response as crashes.
+				default:
+					return "";
+			}
 		}
 		
-		return "bad request";
+		await
+		database
+		.SaveChangesAsync();
+		
+		return "success!";
 	}
 );
 
 if(
 	testing
 )
-server.Run("http://localhost:5002");
+	server
+	.Run(
+		"http://localhost:5002"
+	);
 else
-server.Run(); //default port is 5000
+	server
+	.Run(); //default port is 5000
 
 class payment_provider{
 	public int id {get; private set;}

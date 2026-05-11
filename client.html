@@ -150,29 +150,15 @@
 				'get a single payment provider',
 				
 				async onclick(){
-					let response
-					=
-					await
-					send_request(
-						{
-							name: 'get single',
-							
-							provider_name: name_of_provider.value
-						}
+					display(
+						send_request(
+							{
+								name: 'get single',
+								
+								provider_name: name_of_provider.value
+							}
+						)
 					)
-					
-					if(
-						response===null
-					){
-						display(
-							'This provider does not exist!'
-						)
-					}
-					else{
-						display(
-							response
-						)
-					}
 				}
 			}
 		),
@@ -189,9 +175,12 @@
 					display(
 						send_request(
 							{
-								name: 'remove',
+								name:
+								'remove',
 								
-								provider_name: name_of_provider.value
+								provider_name:
+									name_of_provider
+									.value
 							}
 						)
 					)
